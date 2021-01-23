@@ -5,6 +5,7 @@ import { derived } from 'svelte/store';
 const voter_ranking = derived([topic_data, look_up], 
 	([$topic_data, $look_up]) => {
 		if ($topic_data.result && $look_up){
+			if(Object.keys($topic_data.result.influence).length > 0) {
 			let ranking = Object.entries($topic_data.result.influence)
 				.sort((a,b)=>a[1]<b[1])
 				.map((v)=>{return [$look_up[v[0]], v[1]]})
@@ -12,6 +13,9 @@ const voter_ranking = derived([topic_data, look_up],
 					return `${out}<li>${cur[0]} (${cur[1]})</li>`
 				}, '');
 			return `<ol>${ranking}</ol>`;
+			} else {
+				return 'no votes yet.'
+			}
 		} else {
 			return 'loading...'
 		}
@@ -20,12 +24,16 @@ const voter_ranking = derived([topic_data, look_up],
 const plan_ranking = derived([topic_data, look_up], 
 	([$topic_data, $look_up]) => {
 		if ($topic_data.result && $look_up){
+			if (Object.keys($topic_data.result.votes).length > 0){
 			let ranking = Object.entries($topic_data.result.votes)
 				.sort((a,b)=>a[1]<b[1])
 				.reduce((out, cur)=>{
 					return `${out}<li>${cur[0]} (${cur[1].toFixed(2)})</li>`
 				},'');
 			return `<ol>${ranking}</ol>`
+			} else {
+			return 'no votes yet.'
+			}
 
 		} else {
 			return 'loading...'

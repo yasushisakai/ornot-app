@@ -1,6 +1,6 @@
 <script>
 	import {onMount} from 'svelte';
-	import {api_prefix, topic_id as id, topic_data, look_up} from './store';
+	import {api_prefix, base_url, topic_id as id, topic_data, look_up} from './store';
 	import {load_topic_data} from './load_data';
 	import Voter from './Voter.svelte';
 	import Results from './Results.svelte';
@@ -21,11 +21,24 @@
 
 </script>
 
+<style>
+	#desc{
+		width: 750px;
+	}
+</style>
+
+<div>
+<a href="{base_url}">back to list</a>
 {#if !$topic_data}
 <h1>loading...</h1>
 {:else}
 <h1>{$topic_data.title}</h1>
-<p>{$topic_data.description}</p>
+<p id="desc">
+{$topic_data.description}
+</p>
 <Voter/>
 <Results/>
 {/if}
+</div>
+
+

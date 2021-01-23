@@ -5,6 +5,7 @@
 	
 	function clear_cache(){
 		localStorage.clear();
+		window.location.href = base_url;
 	}
 
 </script>

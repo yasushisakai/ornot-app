@@ -13,7 +13,7 @@
 				"Content-Type": "application/json"
 			}
 		});	
-		message.set("email sent for validation, check your inbox");
+		message.set("<p>email sent for validation, check your inbox :)</p>");
 		did_send.set(true);		
 	}
 </script>
@@ -31,6 +31,7 @@ register to participate
 <label for="email">email</label>
 <input bind:value="{email}" name="email" type="email" size="20" placeholder="you@example.com">
 <button on:click="{register}" disabled={$did_send}>register</button>
-{$message}
+<p>ornot.vote will use your email address *only* to validating that you own it. Developers or maintainers will not be able to retreive the original address.</p>
+{@html $message}
 </div>
 

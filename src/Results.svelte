@@ -1,14 +1,20 @@
 <script>
 import {topic_data, look_up} from './store';
+import {load_lookup} from './load_data';
 import { derived } from 'svelte/store';
 
-const voter_ranking = derived([topic_data, look_up], 
-	([$topic_data, $look_up]) => {
+const voter_ranking = derived(topic_data, 
+	($topic_data) => {
 		if ($topic_data.result && $look_up){
 			if(Object.keys($topic_data.result.influence).length > 0) {
 			let ranking = Object.entries($topic_data.result.influence)
 				.sort((a,b)=>a[1]<b[1])
-				.map((v)=>{return [$look_up[v[0]], v[1]]})
+					.map(async (v)=>{
+						if($look_up[v[0]] == undefined) {
+							await load_lookup();
+						}
+						return [$look_up[v[0]], v[1]]
+					})
 				.reduce((out, cur)=>{
 					return `${out}<li>${cur[0]} (${cur[1]})</li>`
 				}, '');

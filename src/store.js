@@ -1,10 +1,10 @@
 import { writable,derived } from "svelte/store";
 
-export const api_prefix = "http://localhost:8080/api/v1";
-export const base_url = "http://localhost:5000";
+// export const api_prefix = "http://localhost:8080/api/v1";
+// export const base_url = "http://localhost:5000";
 
-// export const base_url = "https://ornot.vote"
-// export const api_prefix = `${base_url}/api/v1`;
+export const base_url = "https://ornot.vote"
+export const api_prefix = `${base_url}/api/v1`;
 
 export const access_token = localStorage.getItem("access_token");
 

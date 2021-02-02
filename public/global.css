@@ -70,3 +70,19 @@ button:focus {
 p#desc{
   width: 750px;
 }
+
+div#caster {
+	width: 700px;
+}
+div#participants {
+	width: 50%;
+	float: left;
+}
+div#plans {
+	width: 50%;
+	float: right;
+}
+div#update-button {
+	clear: both;
+}
+

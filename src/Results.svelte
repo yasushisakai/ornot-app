@@ -1,50 +1,34 @@
 <script>
-import {topic_data, look_up} from './store';
-import {load_lookup} from './load_data';
-import { derived } from 'svelte/store';
+import {influence_ranking, plan_ranking, api_prefix} from './store';
 
-const voter_ranking = derived(topic_data, 
-	($topic_data) => {
-		if ($topic_data.result && $look_up){
-			if(Object.keys($topic_data.result.influence).length > 0) {
-			let ranking = Object.entries($topic_data.result.influence)
-				.sort((a,b)=>a[1]<b[1])
-					.map(async (v)=>{
-						if($look_up[v[0]] == undefined) {
-							await load_lookup();
-						}
-						return [$look_up[v[0]], v[1]]
-					})
-				.reduce((out, cur)=>{
-					return `${out}<li>${cur[0]} (${cur[1]})</li>`
-				}, '');
-			return `<ol>${ranking}</ol>`;
-			} else {
-				return 'no votes yet.'
-			}
+let comment = '';
+
+async function top(uids){
+	let array = await fetch(`${api_prefix}/users`,{
+		method: "POST",
+		body: JSON.stringify(uids),
+		headers: {"Content-Type":"application/json"}
+	}).then(x=>x.json());
+
+	console.log(array);
+
+	comment = '(';
+	array.map(user=>{
+		comment += `#${user[0].substring(0,6)} is ${user[1]}. `
+	})
+	comment += ')';
+}
+
+$: {
+	if($influence_ranking.length > 0) {
+		if($influence_ranking.length > 1){
+			top([$influence_ranking[0][0],$influence_ranking[1][0]])
 		} else {
-			return 'loading...'
-		}
-	});
+			top([$influence_ranking[0][0]])
+		}	
+	}
+}
 
-const plan_ranking = derived([topic_data, look_up], 
-	([$topic_data, $look_up]) => {
-		if ($topic_data.result && $look_up){
-			if (Object.keys($topic_data.result.votes).length > 0){
-			let ranking = Object.entries($topic_data.result.votes)
-				.sort((a,b)=>a[1]<b[1])
-				.reduce((out, cur)=>{
-					return `${out}<li>${cur[0]} (${cur[1].toFixed(2)})</li>`
-				},'');
-			return `<ol>${ranking}</ol>`
-			} else {
-			return 'no votes yet.'
-			}
-
-		} else {
-			return 'loading...'
-		}
-	});
 </script>
 
 <style>
@@ -59,18 +43,34 @@ div#plans {
 	width: 50%;
 	float: right;
 }
+
+span.user-tag{
+	color: #999;
+}
+
 </style>
 
 <div id="results">
 	<h3>Results</h3>
 	<div id="participants">
 	<h4>participants:</h4>
-		{@html $voter_ranking}
+		<ol>
+	{#each $influence_ranking as person}
+		<li><span class="user-tag">#{person[0].substring(0,6)}</span>: {person[1].toFixed(2)}</li>
+	{/each}
+	</ol>
+	<p>
+	{@html comment}
+	</p>
 	</div>
 
 	<div id="plans">
 	<h4>plans:</h4>
-		{@html $plan_ranking}
+	<ol>
+	{#each $plan_ranking as plan}
+		<li>{plan[0]}: {plan[1].toFixed(2)}</li>		
+	{/each}
+	</ol>
 	</div>
 </div>
 
